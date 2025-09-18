@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About SoundWave - Our Features</title>
+    <style>
+        /* General Setup & CSS Variables (LIGHT THEME) */
+        :root {
+            --background: #f9fafb;       /* Light Gray */
+            --foreground: #111827;       /* Dark Slate */
+            --muted-foreground: #6b7280; /* Medium Gray */
+            --card: #ffffff;             /* White */
+            --border: #e5e7eb;           /* Light Gray Border */
+            --primary: #9333ea;           /* A richer Purple for better contrast */
+            --primary-foreground: #ffffff;/* White text on the button */
+            --accent: #f3f4f6;             /* Lighter Gray for hovers */
+            --gradient-start: #a855f7;
+            --gradient-end: #ec4899;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--foreground);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: filter 0.3s ease-in-out;
+        }
+        
+        body.sidebar-open {
+            overflow: hidden;
+            filter: blur(4px);
+        }
+
+        /* Reusable Components */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            border: 1px solid transparent;
+            padding: 0.5rem 1rem;
+            height: 2.5rem;
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+        .btn-outline {
+            border-color: var(--border);
+            background-color: transparent;
+        }
+        .btn-outline:hover {
+            background-color: var(--accent);
+        }
+        .btn-ghost {
+            background-color: transparent;
+        }
+        .btn-ghost:hover {
+            background-color: var(--accent);
+        }
+        .btn-icon {
+            height: 2.5rem;
+            width: 2.5rem;
+            padding: 0;
+        }
+        .container {
+            max-width: 80rem;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 1.5rem;
+        }
+        .card {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+
+        /* Icons */
+        .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            stroke-width: 2;
+        }
+
+        /* Navbar (LIGHT THEME) */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 30;
+            background-color: rgba(249, 250, 251, 0.8); /* Corrected for light theme */
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 4rem;
+        }
+        .navbar-left, .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--foreground);
+        }
+        .logo-icon-wrapper {
+            width: 2rem;
+            height: 2rem;
+            background-image: linear-gradient(to bottom right, var(--gradient-start), var(--gradient-end));
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-icon-wrapper .icon { color: white; }
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .nav-links {
+            display: none; /* Hidden on mobile */
+            gap: 2rem;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted-foreground);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a.active, .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Sidebar */
+        .sidebar-backdrop {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 20rem;
+            background-color: var(--card); /* Use card color for contrast */
+            border-right: 1px solid var(--border);
+            z-index: 50;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            padding: 1.5rem;
+        }
+        body.sidebar-open .sidebar {
+            transform: translateX(0);
+        }
+        body.sidebar-open .sidebar-backdrop {
+            opacity: 1;
+            visibility: visible;
+        }
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: var(--foreground);
+            transition: background-color 0.2s;
+        }
+        .sidebar-nav a:hover {
+            background-color: var(--accent);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 8rem 0 5rem 0;
+            background-color: var(--background); /* Use main background color */
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+        .section-title .highlight {
+            background-image: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: var(--muted-foreground);
+            max-width: 40rem;
+            margin: 0 auto;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        .feature-card .icon-wrapper {
+            width: 3rem;
+            height: 3rem;
+            background-image: linear-gradient(to bottom right, var(--gradient-start), var(--gradient-end));
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            color: white;
+            transition: transform 0.3s;
+        }
+        .feature-card:hover .icon-wrapper {
+            transform: scale(1.1);
+        }
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .feature-card p {
+            color: var(--muted-foreground);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--card);
+            border-top: 1px solid var(--border);
+            padding: 3rem 0;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+        .footer-col h3 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .footer-col a {
+            color: var(--muted-foreground);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-col a:hover {
+            color: var(--foreground);
+        }
+        .footer-bottom {
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+            padding-top: 2rem;
+            text-align: center;
+            color: var(--muted-foreground);
+            font-size: 0.875rem;
+        }
+        
+        /* Responsive Design */
+        @media (min-width: 640px) {
+            .logo-text { display: block; }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        @media (min-width: 768px) {
+            .nav-links { display: flex; }
+            .section-title { font-size: 3rem; }
+        }
+
+        @media (min-width: 1024px) {
+            #menu-btn { display: none; }
+            .features-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="logo">
+                <div class="logo-icon-wrapper">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 6l12-3"/></svg>
+                </div>
+                <span class="logo-text">SoundWave</span>
+            </a>
+            <button class="btn btn-ghost btn-icon" id="close-sidebar-btn">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="index.html">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span>Home</span>
+            </a>
+            <a href="about.html">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>About</span>
+            </a>
+             <a href="contact.html">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                <span>Contact</span>
+            </a>
+        </nav>
+    </aside>
+
+    <header class="navbar">
+        <div class="container">
+            <div class="navbar-left">
+                <button class="btn btn-ghost btn-icon" id="menu-btn">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <a href="index.html" class="logo">
+                    <div class="logo-icon-wrapper">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 6l12-3"/></svg>
+                    </div>
+                    <span class="logo-text">SoundWave</span>
+                </a>
+            </div>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html" class="active">About</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="navbar-right">
+                <button class="btn btn-outline">Sign In</button>
+                <button class="btn btn-primary">Get Started</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        Why Choose <span class="highlight">SoundWave</span>
+                    </h2>
+                    <p class="section-subtitle">
+                        We're revolutionizing the way you experience music with cutting-edge technology and user-centric design.
+                    </p>
+                </div>
+                <div class="features-grid">
+                    <div class="card feature-card">
+                        <div class="icon-wrapper">
+                            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                        </div>
+                        <h3>High-Quality Audio</h3>
+                        <p>Experience crystal-clear sound with lossless audio streaming up to 24-bit/192kHz quality.</p>
+                    </div>
+                    <div class="card feature-card">
+                        <div class="icon-wrapper">
+                            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197M15 21a6 6 0 006-6v-1a4 4 0 00-4-4H9a4 4 0 00-4 4v1a6 6 0 006 6z"/></svg>
+                        </div>
+                        <h3>Social Playlists</h3>
+                        <p>Create and share playlists with friends. Discover what others are listening to.</p>
+                    </div>
+                    <div class="card feature-card">
+                        <div class="icon-wrapper">
+                           <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        </div>
+                        <h3>Lightning Fast</h3>
+                        <p>Instant playback with our advanced caching technology. No more waiting.</p>
+                    </div>
+                    <div class="card feature-card">
+                        <div class="icon-wrapper">
+                            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        </div>
+                        <h3>Offline Mode</h3>
+                        <p>Download your favorite tracks and listen anywhere, even without internet.</p>
+                    </div>
+                     <div class="card feature-card">
+                        <div class="icon-wrapper">
+                           <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
+                        </div>
+                        <h3>Personalized</h3>
+                        <p>AI-powered recommendations based on your listening habits and preferences.</p>
+                    </div>
+                     <div class="card feature-card">
+                        <div class="icon-wrapper">
+                           <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                        </div>
+                        <h3>Unlimited Likes</h3>
+                        <p>Save unlimited songs to your library and access them across all devices.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col" style="grid-column: span 2 / span 2;">
+                    <a href="index.html" class="logo">
+                        <div class="logo-icon-wrapper">
+                            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 6l12-3"/></svg>
+                        </div>
+                        <span class="logo-text">SoundWave</span>
+                    </a>
+                </div>
+                <div class="footer-col">
+                    <h3>Product</h3>
+                    <ul>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Mobile App</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 SoundWave. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        const menuBtn = document.getElementById('menu-btn');
+        const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+
+        function openSidebar() {
+            document.body.classList.add('sidebar-open');
+        }
+
+        function closeSidebar() {
+            document.body.classList.remove('sidebar-open');
+        }
+
+        menuBtn.addEventListener('click', openSidebar);
+        closeSidebarBtn.addEventListener('click', closeSidebar);
+        sidebarBackdrop.addEventListener('click', closeSidebar);
+    </script>
+</body>
+</html>
